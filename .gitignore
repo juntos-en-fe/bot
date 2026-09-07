@@ -1,0 +1,17 @@
+# Local configuration and secrets
+.env
+
+# Local SQLite database files
+data/
+*.db
+*.db-shm
+*.db-wal
+
+# Go build and test output
+bin/
+coverage.out
+
+# Editor and OS files
+.DS_Store
+.idea/
+.vscode/

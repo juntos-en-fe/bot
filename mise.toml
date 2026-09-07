@@ -1,0 +1,27 @@
+[tools]
+# Match the Go version used to develop and verify this project.
+go = "1.27.0"
+
+[tasks.run]
+description = "Start the Discord bot"
+run = "go run ./cmd/bot"
+
+[tasks.test]
+description = "Run the test suite"
+run = "go test ./..."
+
+[tasks.vet]
+description = "Run Go static analysis"
+run = "go vet ./..."
+
+[tasks.fmt]
+description = "Format Go source files"
+run = "gofmt -w $(find . -name '*.go' -not -path './vendor/*')"
+
+[tasks.tidy]
+description = "Synchronize Go module dependencies"
+run = "go mod tidy"
+
+[tasks.check]
+description = "Run tests and static analysis"
+depends = ["test", "vet"]
