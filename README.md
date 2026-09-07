@@ -75,20 +75,20 @@ settings and user IDs.
 Members can manage only their own recurring birthday (day and month):
 
 ```text
-/cumpleanos registrar fecha:DD/MM
-/cumpleanos editar fecha:DD/MM
-/cumpleanos eliminar
-/cumpleanos ver
+/cumpleaños registrar fecha:DD/MM
+/cumpleaños editar fecha:DD/MM
+/cumpleaños eliminar
+/cumpleaños ver
 ```
 
-The server owner configures the staff role with `/cumpleanos configurar-rol`.
+The server owner configures the staff role with `/cumpleaños configurar-rol`.
 That role, and the owner as a recovery path, can set the notification channel
 and IANA timezone, remove an absent user by Discord ID, or bulk-clean records
 of departed members. Only members holding the configured staff role can use
-`/cumpleanos registrar-usuario` to register someone else's birthday.
-They can also use `/cumpleanos editar-usuario` to correct another member's
+`/cumpleaños registrar-usuario` to register someone else's birthday.
+They can also use `/cumpleaños editar-usuario` to correct another member's
 registered birthday. Staff can set announcement text with
-`/cumpleanos configurar-mensaje`. A non-blank template must contain exactly
+`/cumpleaños configurar-mensaje`. A non-blank template must contain exactly
 one case-sensitive `{usuarios}` placeholder, for example
 `🎂 ¡Feliz cumpleaños, {usuarios}!`; it is replaced inline with the birthday
 member mentions. Set it to blank to send only the mentions. Multiple members

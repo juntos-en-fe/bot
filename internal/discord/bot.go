@@ -105,7 +105,7 @@ func (b *Bot) handleBirthdayCommand(s *discordgo.Session, interaction *discordgo
 		return "No se pudo determinar el subcomando."
 	}
 	subcommand := data.Options[0]
-	command := findCommand("cumpleanos")
+	command := findCommand("cumpleaños")
 	descriptor := findSubcommand(command, subcommand.Name)
 	if descriptor == nil {
 		return "No se pudo determinar el subcomando."
@@ -124,7 +124,7 @@ func (b *Bot) registerBirthday(_ *discordgo.Session, interaction *discordgo.Inte
 		return "No se pudo guardar tu cumpleaños. Inténtalo de nuevo."
 	}
 	if !created {
-		return "Ya tienes un cumpleaños registrado. Usa `/cumpleanos editar` para cambiarlo."
+		return "Ya tienes un cumpleaños registrado. Usa `/cumpleaños editar` para cambiarlo."
 	}
 	return fmt.Sprintf("Tu cumpleaños quedó registrado para el %s.", date)
 }
@@ -140,7 +140,7 @@ func (b *Bot) editBirthday(_ *discordgo.Session, interaction *discordgo.Interact
 		return "No se pudo actualizar tu cumpleaños. Inténtalo de nuevo."
 	}
 	if !updated {
-		return "No tienes un cumpleaños registrado. Usa `/cumpleanos registrar` primero."
+		return "No tienes un cumpleaños registrado. Usa `/cumpleaños registrar` primero."
 	}
 	return fmt.Sprintf("Tu cumpleaños se actualizó al %s.", date)
 }
@@ -152,7 +152,7 @@ func (b *Bot) viewBirthday(_ *discordgo.Session, interaction *discordgo.Interact
 		return "No se pudo consultar tu cumpleaños. Inténtalo de nuevo."
 	}
 	if !found {
-		return "No tienes un cumpleaños registrado. Usa `/cumpleanos registrar` primero."
+		return "No tienes un cumpleaños registrado. Usa `/cumpleaños registrar` primero."
 	}
 	return fmt.Sprintf("Tu cumpleaños está registrado para el %s.", date)
 }

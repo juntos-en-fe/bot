@@ -24,12 +24,12 @@ func TestCommandRegistryDefinitionsAndDispatch(t *testing.T) {
 	if len(commands) != 3 {
 		t.Fatalf("registered commands = %d, want 3", len(commands))
 	}
-	for _, name := range []string{"ping", "cumpleanos", "ayuda"} {
+	for _, name := range []string{"ping", "cumpleaños", "ayuda"} {
 		if command := findCommand(name); command == nil || command.Handler == nil {
 			t.Fatalf("command %q is not dispatchable", name)
 		}
 	}
-	birthdayCommand := findCommand("cumpleanos")
+	birthdayCommand := findCommand("cumpleaños")
 	for _, option := range birthdayCommand.Definition.Options {
 		if option.Name == "registrar-usuario" {
 			if len(option.Options) != 2 || option.Options[0].Type != discordgo.ApplicationCommandOptionUser {
@@ -43,27 +43,27 @@ func TestCommandRegistryDefinitionsAndDispatch(t *testing.T) {
 
 func TestHelpMessages(t *testing.T) {
 	overview := helpMessage(discordgo.ApplicationCommandInteractionData{})
-	for _, command := range []string{"/ping", "/cumpleanos", "/ayuda"} {
+	for _, command := range []string{"/ping", "/cumpleaños", "/ayuda"} {
 		if !strings.Contains(overview, command) {
 			t.Fatalf("overview does not contain %q: %s", command, overview)
 		}
 	}
 
-	birthdayHelp := helpMessage(discordgo.ApplicationCommandInteractionData{Options: stringOptions("comando", "cumpleanos")})
-	if !strings.Contains(birthdayHelp, "/cumpleanos registrar") || !strings.Contains(birthdayHelp, "configurar-mensaje") {
+	birthdayHelp := helpMessage(discordgo.ApplicationCommandInteractionData{Options: stringOptions("comando", "cumpleaños")})
+	if !strings.Contains(birthdayHelp, "/cumpleaños registrar") || !strings.Contains(birthdayHelp, "configurar-mensaje") {
 		t.Fatalf("birthday help is incomplete: %s", birthdayHelp)
 	}
 
-	subcommandHelp := helpMessage(discordgo.ApplicationCommandInteractionData{Options: append(stringOptions("comando", "cumpleanos"), stringOptions("subcomando", "ver")...)})
-	if !strings.Contains(subcommandHelp, "`/cumpleanos ver`") || !strings.Contains(subcommandHelp, "Permisos:") {
+	subcommandHelp := helpMessage(discordgo.ApplicationCommandInteractionData{Options: append(stringOptions("comando", "cumpleaños"), stringOptions("subcomando", "ver")...)})
+	if !strings.Contains(subcommandHelp, "`/cumpleaños ver`") || !strings.Contains(subcommandHelp, "Permisos:") {
 		t.Fatalf("subcommand help is incomplete: %s", subcommandHelp)
 	}
 
-	invalid := helpMessage(discordgo.ApplicationCommandInteractionData{Options: stringOptions("comando", "cumpleanos")})
+	invalid := helpMessage(discordgo.ApplicationCommandInteractionData{Options: stringOptions("comando", "cumpleaños")})
 	if !strings.Contains(invalid, "Subcomandos:") {
 		t.Fatalf("root command help should list valid subcommands: %s", invalid)
 	}
-	invalid = helpMessage(discordgo.ApplicationCommandInteractionData{Options: append(stringOptions("comando", "cumpleanos"), stringOptions("subcomando", "invalido")...)})
+	invalid = helpMessage(discordgo.ApplicationCommandInteractionData{Options: append(stringOptions("comando", "cumpleaños"), stringOptions("subcomando", "invalido")...)})
 	if !strings.Contains(invalid, "No existe el subcomando") || !strings.Contains(invalid, "Subcomandos:") {
 		t.Fatalf("invalid subcommand feedback is incomplete: %s", invalid)
 	}

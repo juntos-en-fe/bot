@@ -19,7 +19,7 @@ type commandDescriptor struct {
 	Subcommands    []subcommandDescriptor
 }
 
-// subcommandDescriptor describes a /cumpleanos subcommand.
+// subcommandDescriptor describes a /cumpleaños subcommand.
 type subcommandDescriptor struct {
 	Definition     *discordgo.ApplicationCommandOption
 	Summary        string
@@ -56,7 +56,7 @@ func init() {
 		{
 			Definition:     birthdayCommandDefinition(birthdayCommands),
 			Summary:        "Registra y administra cumpleaños.",
-			Usage:          "/cumpleanos <subcomando>",
+			Usage:          "/cumpleaños <subcomando>",
 			PermissionNote: "Las acciones de administración requieren el rol de staff configurado; el propietario del servidor conserva acceso de recuperación.",
 			Help:           "Guarda únicamente el día y el mes del cumpleaños para este servidor.",
 			Handler:        (*Bot).handleBirthdayInteraction,
@@ -87,7 +87,7 @@ func helpCommandDefinition() *discordgo.ApplicationCommand {
 func birthdayCommandDefinition(subcommands []subcommandDescriptor) *discordgo.ApplicationCommand {
 	disableDMs := false
 	definition := &discordgo.ApplicationCommand{
-		Name: "cumpleanos", Description: "Registra y administra cumpleaños.", DMPermission: &disableDMs,
+		Name: "cumpleaños", Description: "Registra y administra cumpleaños.", DMPermission: &disableDMs,
 	}
 	for _, subcommand := range subcommands {
 		definition.Options = append(definition.Options, subcommand.Definition)
@@ -97,18 +97,18 @@ func birthdayCommandDefinition(subcommands []subcommandDescriptor) *discordgo.Ap
 
 func birthdaySubcommands() []subcommandDescriptor {
 	return []subcommandDescriptor{
-		{birthdayDateCommand("registrar", "Registra tu cumpleaños."), "Registra tu cumpleaños.", "/cumpleanos registrar fecha:DD/MM", "Disponible para todos los miembros.", "Guarda tu día y mes de cumpleaños en este servidor.", (*Bot).registerBirthday},
-		{birthdayUserDateCommand(), "Registra el cumpleaños de otro miembro.", "/cumpleanos registrar-usuario usuario:@miembro fecha:DD/MM", "Solo el rol de staff configurado.", "Registra el día y mes de otro miembro.", (*Bot).registerMemberBirthday},
-		{birthdayDateCommand("editar", "Edita tu cumpleaños."), "Edita tu cumpleaños.", "/cumpleanos editar fecha:DD/MM", "Disponible para todos los miembros.", "Cambia tu día y mes de cumpleaños ya registrado.", (*Bot).editBirthday},
-		{birthdayUserDateCommand("editar-usuario", "Edita el cumpleaños de otro miembro."), "Edita el cumpleaños de otro miembro.", "/cumpleanos editar-usuario usuario:@miembro fecha:DD/MM", "Solo el rol de staff configurado.", "Corrige el día y mes registrado de otro miembro.", (*Bot).editMemberBirthday},
-		{&discordgo.ApplicationCommandOption{Type: discordgo.ApplicationCommandOptionSubCommand, Name: "ver", Description: "Muestra tu cumpleaños registrado."}, "Muestra tu cumpleaños registrado.", "/cumpleanos ver", "Disponible para todos los miembros.", "Muestra el día y mes que tienes guardados.", (*Bot).viewBirthday},
-		{&discordgo.ApplicationCommandOption{Type: discordgo.ApplicationCommandOptionSubCommand, Name: "eliminar", Description: "Elimina tu cumpleaños."}, "Elimina tu cumpleaños.", "/cumpleanos eliminar", "Disponible para todos los miembros.", "Elimina tu cumpleaños de este servidor.", (*Bot).deleteBirthday},
-		{&discordgo.ApplicationCommandOption{Type: discordgo.ApplicationCommandOptionSubCommand, Name: "configurar-rol", Description: "Configura el rol de staff.", Options: []*discordgo.ApplicationCommandOption{{Type: discordgo.ApplicationCommandOptionRole, Name: "rol", Description: "Rol autorizado para administrar cumpleaños.", Required: true}}}, "Configura el rol de staff.", "/cumpleanos configurar-rol rol:@rol", "Solo el propietario del servidor.", "Define el rol que podrá administrar los avisos y la limpieza.", (*Bot).setBirthdayStaffRole},
-		{&discordgo.ApplicationCommandOption{Type: discordgo.ApplicationCommandOptionSubCommand, Name: "configurar-canal", Description: "Configura el canal de avisos.", Options: []*discordgo.ApplicationCommandOption{{Type: discordgo.ApplicationCommandOptionChannel, Name: "canal", Description: "Canal de texto para los avisos diarios.", ChannelTypes: []discordgo.ChannelType{discordgo.ChannelTypeGuildText, discordgo.ChannelTypeGuildNews}, Required: true}}}, "Configura el canal de avisos.", "/cumpleanos configurar-canal canal:#canal", "Rol de staff configurado o propietario del servidor.", "Selecciona el canal de texto donde se enviarán los avisos diarios.", (*Bot).setBirthdayNotificationChannel},
-		{&discordgo.ApplicationCommandOption{Type: discordgo.ApplicationCommandOptionSubCommand, Name: "configurar-mensaje", Description: "Configura el texto de los avisos.", Options: []*discordgo.ApplicationCommandOption{{Type: discordgo.ApplicationCommandOptionString, Name: "mensaje", Description: "Texto con exactamente un {usuarios}.", MaxLength: 1500, Required: true}}}, "Configura el texto de los avisos.", "/cumpleanos configurar-mensaje mensaje:🎂 ¡Feliz cumpleaños, {usuarios}!", "Rol de staff configurado o propietario del servidor.", "Usa exactamente una vez `{usuarios}` para insertar las menciones. Déjalo en blanco para enviar solo las menciones.", (*Bot).setBirthdayNotificationText},
-		{&discordgo.ApplicationCommandOption{Type: discordgo.ApplicationCommandOptionSubCommand, Name: "configurar-zona", Description: "Configura la zona horaria.", Options: []*discordgo.ApplicationCommandOption{{Type: discordgo.ApplicationCommandOptionString, Name: "zona", Description: "Zona IANA, por ejemplo America/Argentina/Buenos_Aires.", Required: true}}}, "Configura la zona horaria.", "/cumpleanos configurar-zona zona:America/Argentina/Buenos_Aires", "Rol de staff configurado o propietario del servidor.", "Configura la zona IANA usada para enviar el aviso diario a las 09:00.", (*Bot).setBirthdayTimezone},
-		{&discordgo.ApplicationCommandOption{Type: discordgo.ApplicationCommandOptionSubCommand, Name: "limpiar-salidos", Description: "Elimina registros de usuarios que ya no están."}, "Elimina registros de usuarios que ya no están.", "/cumpleanos limpiar-salidos", "Rol de staff configurado o propietario del servidor.", "Comprueba todos los registros y elimina los de miembros que ya salieron.", (*Bot).cleanBirthdayDepartedMembers},
-		{&discordgo.ApplicationCommandOption{Type: discordgo.ApplicationCommandOptionSubCommand, Name: "eliminar-id", Description: "Elimina el registro de un usuario por su ID.", Options: []*discordgo.ApplicationCommandOption{{Type: discordgo.ApplicationCommandOptionString, Name: "usuario_id", Description: "ID de Discord del usuario ausente.", Required: true}}}, "Elimina el registro de un usuario ausente.", "/cumpleanos eliminar-id usuario_id:ID", "Rol de staff configurado o propietario del servidor.", "Elimina el registro solo si ese ID ya no corresponde a un miembro del servidor.", (*Bot).deleteBirthdayByID},
+		{birthdayDateCommand("registrar", "Registra tu cumpleaños."), "Registra tu cumpleaños.", "/cumpleaños registrar fecha:DD/MM", "Disponible para todos los miembros.", "Guarda tu día y mes de cumpleaños en este servidor.", (*Bot).registerBirthday},
+		{birthdayUserDateCommand(), "Registra el cumpleaños de otro miembro.", "/cumpleaños registrar-usuario usuario:@miembro fecha:DD/MM", "Solo el rol de staff configurado.", "Registra el día y mes de otro miembro.", (*Bot).registerMemberBirthday},
+		{birthdayDateCommand("editar", "Edita tu cumpleaños."), "Edita tu cumpleaños.", "/cumpleaños editar fecha:DD/MM", "Disponible para todos los miembros.", "Cambia tu día y mes de cumpleaños ya registrado.", (*Bot).editBirthday},
+		{birthdayUserDateCommand("editar-usuario", "Edita el cumpleaños de otro miembro."), "Edita el cumpleaños de otro miembro.", "/cumpleaños editar-usuario usuario:@miembro fecha:DD/MM", "Solo el rol de staff configurado.", "Corrige el día y mes registrado de otro miembro.", (*Bot).editMemberBirthday},
+		{&discordgo.ApplicationCommandOption{Type: discordgo.ApplicationCommandOptionSubCommand, Name: "ver", Description: "Muestra tu cumpleaños registrado."}, "Muestra tu cumpleaños registrado.", "/cumpleaños ver", "Disponible para todos los miembros.", "Muestra el día y mes que tienes guardados.", (*Bot).viewBirthday},
+		{&discordgo.ApplicationCommandOption{Type: discordgo.ApplicationCommandOptionSubCommand, Name: "eliminar", Description: "Elimina tu cumpleaños."}, "Elimina tu cumpleaños.", "/cumpleaños eliminar", "Disponible para todos los miembros.", "Elimina tu cumpleaños de este servidor.", (*Bot).deleteBirthday},
+		{&discordgo.ApplicationCommandOption{Type: discordgo.ApplicationCommandOptionSubCommand, Name: "configurar-rol", Description: "Configura el rol de staff.", Options: []*discordgo.ApplicationCommandOption{{Type: discordgo.ApplicationCommandOptionRole, Name: "rol", Description: "Rol autorizado para administrar cumpleaños.", Required: true}}}, "Configura el rol de staff.", "/cumpleaños configurar-rol rol:@rol", "Solo el propietario del servidor.", "Define el rol que podrá administrar los avisos y la limpieza.", (*Bot).setBirthdayStaffRole},
+		{&discordgo.ApplicationCommandOption{Type: discordgo.ApplicationCommandOptionSubCommand, Name: "configurar-canal", Description: "Configura el canal de avisos.", Options: []*discordgo.ApplicationCommandOption{{Type: discordgo.ApplicationCommandOptionChannel, Name: "canal", Description: "Canal de texto para los avisos diarios.", ChannelTypes: []discordgo.ChannelType{discordgo.ChannelTypeGuildText, discordgo.ChannelTypeGuildNews}, Required: true}}}, "Configura el canal de avisos.", "/cumpleaños configurar-canal canal:#canal", "Rol de staff configurado o propietario del servidor.", "Selecciona el canal de texto donde se enviarán los avisos diarios.", (*Bot).setBirthdayNotificationChannel},
+		{&discordgo.ApplicationCommandOption{Type: discordgo.ApplicationCommandOptionSubCommand, Name: "configurar-mensaje", Description: "Configura el texto de los avisos.", Options: []*discordgo.ApplicationCommandOption{{Type: discordgo.ApplicationCommandOptionString, Name: "mensaje", Description: "Texto con exactamente un {usuarios}.", MaxLength: 1500, Required: true}}}, "Configura el texto de los avisos.", "/cumpleaños configurar-mensaje mensaje:🎂 ¡Feliz cumpleaños, {usuarios}!", "Rol de staff configurado o propietario del servidor.", "Usa exactamente una vez `{usuarios}` para insertar las menciones. Déjalo en blanco para enviar solo las menciones.", (*Bot).setBirthdayNotificationText},
+		{&discordgo.ApplicationCommandOption{Type: discordgo.ApplicationCommandOptionSubCommand, Name: "configurar-zona", Description: "Configura la zona horaria.", Options: []*discordgo.ApplicationCommandOption{{Type: discordgo.ApplicationCommandOptionString, Name: "zona", Description: "Zona IANA, por ejemplo America/Argentina/Buenos_Aires.", Required: true}}}, "Configura la zona horaria.", "/cumpleaños configurar-zona zona:America/Argentina/Buenos_Aires", "Rol de staff configurado o propietario del servidor.", "Configura la zona IANA usada para enviar el aviso diario a las 09:00.", (*Bot).setBirthdayTimezone},
+		{&discordgo.ApplicationCommandOption{Type: discordgo.ApplicationCommandOptionSubCommand, Name: "limpiar-salidos", Description: "Elimina registros de usuarios que ya no están."}, "Elimina registros de usuarios que ya no están.", "/cumpleaños limpiar-salidos", "Rol de staff configurado o propietario del servidor.", "Comprueba todos los registros y elimina los de miembros que ya salieron.", (*Bot).cleanBirthdayDepartedMembers},
+		{&discordgo.ApplicationCommandOption{Type: discordgo.ApplicationCommandOptionSubCommand, Name: "eliminar-id", Description: "Elimina el registro de un usuario por su ID.", Options: []*discordgo.ApplicationCommandOption{{Type: discordgo.ApplicationCommandOptionString, Name: "usuario_id", Description: "ID de Discord del usuario ausente.", Required: true}}}, "Elimina el registro de un usuario ausente.", "/cumpleaños eliminar-id usuario_id:ID", "Rol de staff configurado o propietario del servidor.", "Elimina el registro solo si ese ID ya no corresponde a un miembro del servidor.", (*Bot).deleteBirthdayByID},
 	}
 }
 
@@ -174,7 +174,7 @@ func helpMessage(data discordgo.ApplicationCommandInteractionData) string {
 	subcommandName := strings.TrimSpace(rootStringOption(data.Options, "subcomando"))
 	if commandName == "" {
 		if subcommandName != "" {
-			return "Indica primero un comando. Uso: `/ayuda comando:cumpleanos subcomando:ver`.\n\n" + helpOverview()
+			return "Indica primero un comando. Uso: `/ayuda comando:cumpleaños subcomando:ver`.\n\n" + helpOverview()
 		}
 		return helpOverview()
 	}
@@ -204,7 +204,7 @@ func helpOverview() string {
 		}
 		lines = append(lines, fmt.Sprintf("`/%s` — %s%s", command.Definition.Name, command.Summary, staff))
 	}
-	return "Comandos disponibles:\n" + strings.Join(lines, "\n") + "\n\nUsa `/ayuda comando:cumpleanos` para ver sus subcomandos."
+	return "Comandos disponibles:\n" + strings.Join(lines, "\n") + "\n\nUsa `/ayuda comando:cumpleaños` para ver sus subcomandos."
 }
 
 func commandHelp(command *commandDescriptor) string {
