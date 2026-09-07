@@ -23,6 +23,53 @@ A Go Discord bot with slash commands and SQLite persistence.
 The initial command is `/ping`, which responds with `Pong!`. The SQLite file is
 created at `data/bot.db` by default. See `.env.example` for all settings.
 
+## Deploy with Docker
+
+Docker Compose builds the bot image and stores its SQLite database in the
+named `bot-data` volume. The volume survives container rebuilds and restarts;
+do not run `docker compose down -v` unless you deliberately want to delete all
+bot data.
+
+1. Install Docker Engine with the Docker Compose plugin.
+2. Create the production environment file and set the Discord credentials:
+
+   ```sh
+   cp .env.example .env
+   ```
+
+   Leave `DISCORD_GUILD_ID` blank to register commands globally, or set it to a
+   server ID for development. Compose always uses `/data/bot.db` in the
+   persistent volume, regardless of `DATABASE_PATH` in `.env`.
+
+3. Build and start the bot:
+
+   ```sh
+   docker compose up -d --build
+   docker compose logs -f bot
+   ```
+
+The container has no inbound ports: Discord's gateway connection is outbound.
+It restarts automatically unless explicitly stopped, runs as an unprivileged
+user with a read-only root filesystem, and receives `SIGTERM` for graceful
+shutdown.
+
+### Back up and restore data
+
+Stop the bot before copying the database so a SQLite write-ahead log cannot be
+missed. Replace `backup-dir` with an existing directory outside this repository
+if it may contain secrets.
+
+```sh
+docker compose stop bot
+docker run --rm -v bot_bot-data:/data -v "$PWD/backup-dir:/backup" alpine \
+  cp /data/bot.db /backup/bot.db
+docker compose start bot
+```
+
+To restore, stop the bot and copy a known-good `bot.db` back into the same
+volume using the inverse command. Keep the backup private: it contains server
+settings and user IDs.
+
 ## Cumpleaños
 
 Members can manage only their own recurring birthday (day and month):
